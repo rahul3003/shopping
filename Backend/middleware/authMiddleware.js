@@ -10,7 +10,9 @@ const authMiddleware = asyncHandler(
             try {
                 if (token) {
                     const decoded = jwt.verify(token, process.env.JWT_SECRET)
-                    console.log(decoded)
+                    const user =await User.findById(decoded?.id);
+                    req.user=user;
+                    next();
                 }
             } catch (error) {
                 throw new Error("Not authorized Token")
