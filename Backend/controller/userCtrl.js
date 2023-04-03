@@ -1,7 +1,8 @@
 const User = require("../modules/userModel");
 const asyncHandler = require('express-async-handler');
 const { generateToken } = require("../config/jwt");
-
+const validateMongodbId = require("../utils/validateMongodbId");
+const { generateRefreshToken } = require("../config/refreshToken");
 
 const createUser = asyncHandler(
     async (req, res) => {
@@ -27,13 +28,27 @@ const loginCtrl = asyncHandler(
         const findUser = await User.findOne({ email });
         if (findUser) {
             if (await findUser.isPasswordMatched(password)) {
+                const refreshToken = await generateRefreshToken(findUser?._id)
+                const updateUser = await User.findByIdAndUpdate(
+                    findUser.id,
+                    {
+                        refreshToken: refreshToken
+                    },
+                    {
+                        new: true
+                    }
+                )
+                res.cookie("RefreshToken", refreshToken, {
+                    httpOnly: true,
+                    maxAge: 72 * 60 * 60 * 1000,
+                })
                 res.json({
                     _id: findUser?.id,
                     firstname: findUser?.firstname,
                     lastname: findUser?.lastname,
                     email: findUser?.email,
                     mobile: findUser?.mobile,
-                    token: generateToken(findUser?.id),
+                    token: generateToken(findUser?._id),
                 });
             } else {
                 throw new Error("Password is not matched")
@@ -62,6 +77,7 @@ const getAllUsers = asyncHandler(
 const getAUser = asyncHandler(
     async (req, res) => {
         const { id } = req.params;
+        validateMongodbId(id)
         try {
             const getAUser = await User.findById(id)
             res.json({
@@ -77,6 +93,7 @@ const getAUser = asyncHandler(
 const deleteUser = asyncHandler(
     async (req, res) => {
         const { id } = req.params;
+        validateMongodbId(id)
         try {
             const deleteUser = await User.findByIdAndDelete(id)
             res.json(deleteUser)
@@ -90,6 +107,7 @@ const deleteUser = asyncHandler(
 const updatedUser = asyncHandler(
     async (req, res) => {
         const { _id } = req.user;
+        validateMongodbId(_id)
         try {
             const updatedUser = await User.findByIdAndUpdate(_id, {
                 firstname: req?.body?.firstname,
@@ -106,9 +124,16 @@ const updatedUser = asyncHandler(
     }
 )
 
+//refresh 
+const handleRefresh = asyncHandler(async (req, res) => {
+    const cookie = req.cookies;
+    console.log(cookie)
+})
+
 //block user 
 const blockUser = asyncHandler(async (req, res) => {
     const { id } = req.params;
+    validateMongodbId(id)
     try {
         const block = await User.findByIdAndUpdate(
             id, {
@@ -123,9 +148,11 @@ const blockUser = asyncHandler(async (req, res) => {
         throw new Error(error)
     }
 })
+
 //unblock user 
 const unblockUser = asyncHandler(async (req, res) => {
     const { id } = req.params;
+    validateMongodbId(id)
     try {
         const unblock = await User.findByIdAndUpdate(
             id, {
@@ -141,4 +168,4 @@ const unblockUser = asyncHandler(async (req, res) => {
         throw new Error(error)
     }
 })
-module.exports = { createUser, loginCtrl, getAllUsers, getAUser, deleteUser, updatedUser, blockUser, unblockUser }
+module.exports = { createUser, loginCtrl, getAllUsers, getAUser, deleteUser, updatedUser, blockUser, unblockUser, handleRefresh }
