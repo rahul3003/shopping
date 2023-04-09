@@ -76,5 +76,25 @@ a {
   width: 100%;
   transform: translate3d(0px, 57px,0px) !important;
 }
+.header-bottom .dropdown-item:hover{
+  background-color: #3b4149;
+}
 
-/*header part end  */ 
+.header-bottom .dropdown-item{
+  padding: 10px;
+  margin-bottom: 3px;
+  border-bottom: 1px solid rgb(124, 124, 124);
+}
+
+/*header part end here */ 
+
+/*footer part */
+footer{
+  background-color: var(--color-232f3e);
+}
+
+footer:not(:first-child){
+  border-top: 1px solid var(--color-3b4149);
+}
+
+/* footer part end here */
