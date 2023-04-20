@@ -63,41 +63,58 @@ const Home = () => {
           <div className='row'>
             <div className='col-12'>
               <div className='service d-flex align-items-center justify-content-between'>
-                <div>
-                  <img src="" alt="service"/>
+                <div className='d-flex gap-10 align-items-center'>
+                  <img src="images/service.png" alt="service" />
                   <div>
-                    <h6></h6>
-                    <p></p>
+                    <h6>Free shipping</h6>
+                    <p className='mb-0'>From all orders over $5</p>
                   </div>
                 </div>
-                <div>
-                  <img src="" alt="service"/>
+                <div className='d-flex gap-10 align-items-center'>
+                  <img src="images/service-02.png" alt="service" />
                   <div>
-                    <h6></h6>
-                    <p></p>
+                    <h6>Daily surprise offers</h6>
+                    <p className='mb-0'>save upto %5 off</p>
                   </div>
                 </div>
-                <div>
-                  <img src="" alt="service"/>
+                <div className='d-flex gap-10 align-items-center'>
+                  <img src="images/service-03.png" alt="service" />
                   <div>
-                    <h6></h6>
-                    <p></p>
+                    <h6>Support 24/7</h6>
+                    <p className='mb-0'>Shop with expert</p>
                   </div>
                 </div>
-                <div>
-                  <img src="" alt="service"/>
+                <div className='d-flex gap-10 align-items-center'>
+                  <img src="images/service-04.png" alt="service" />
                   <div>
-                    <h6></h6>
-                    <p></p>
+                    <h6>Affordable prices</h6>
+                    <p className='mb-0'>Get Factory Default Price</p>
                   </div>
                 </div>
-                <div>
-                  <img src="" alt="service"/>
+                <div className='d-flex gap-10 align-items-center'>
+                  <img src="images/service-05.png" alt="service" />
                   <div>
-                    <h6></h6>
-                    <p></p>
+                    <h6>Secure payment</h6>
+                    <p className='mb-0'>100% Protected</p>
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section className='home-wrapper-2 py-5'>
+        <div className='container-xxl'>
+          <div className="row">
+            <div className='col-12'>
+              <div className='categories d-flex justify-content-between align-items-center'>
+                  <div>
+                    <div>
+                      <h4></h4>
+                      <p></p>
+                    </div>
+                    <img src="" alt=""/>
+                  </div>
               </div>
             </div>
           </div>
