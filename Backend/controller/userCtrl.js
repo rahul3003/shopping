@@ -28,9 +28,9 @@ const loginCtrl = asyncHandler(
         const findUser = await User.findOne({ email });
         if (findUser) {
             if (await findUser.isPasswordMatched(password)) {
-                const refreshToken = await generateRefreshToken(findAdmin?._id);
+                const refreshToken = await generateRefreshToken(findUser?._id);
                 const updateuser = await User.findByIdAndUpdate(
-                    findAdmin.id,
+                    findUser.id,
                     {
                         refreshToken: refreshToken,
                     },
@@ -41,12 +41,12 @@ const loginCtrl = asyncHandler(
                     maxAge: 72 * 60 * 60 * 1000,
                 });
                 res.json({
-                    _id: findAdmin?._id,
-                    firstname: findAdmin?.firstname,
-                    lastname: findAdmin?.lastname,
-                    email: findAdmin?.email,
-                    mobile: findAdmin?.mobile,
-                    token: generateToken(findAdmin?._id),
+                    _id: findUser?._id,
+                    firstname: findUser?.firstname,
+                    lastname: findUser?.lastname,
+                    email: findUser?.email,
+                    mobile: findUser?.mobile,
+                    token: generateToken(findUser?._id),
                 });
             } else {
                 throw new Error("Password is not matched")
@@ -171,7 +171,7 @@ const unblockUser = asyncHandler(async (req, res) => {
         }
         );
         res.json({
-            message: "user unblocked"
+            message: "User Unblocked"
         });
     } catch (error) {
         throw new Error(error)
