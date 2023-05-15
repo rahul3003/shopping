@@ -3,6 +3,7 @@ const asyncHandler = require('express-async-handler');
 const { generateToken } = require("../config/jwt");
 const validateMongodbId = require("../utils/validateMongodbId");
 const { generateRefreshToken } = require("../config/refreshToken");
+const jwt = require('jsonwebtoken')
 
 const createUser = asyncHandler(
     async (req, res) => {
@@ -126,7 +127,40 @@ const updatedUser = asyncHandler(
 // handle refresh token
 const handleRefreshToken = asyncHandler(async (req, res) => {
     const cookie = req.cookies;
-    console.log(cookie)
+    if (!cookie?.refreshToken) throw new Error("No refresh Token in cookies");
+    const refreshToken = cookie.refreshToken;
+    const user = await User.findOne({ refreshToken })
+    if (!user) throw new Error("No refresh token matched in db or not matched")
+    jwt.verify(refreshToken, process.env.JWT_SECRET, (err, decoded) => {
+        if (err || user.id !== decoded.id){
+            throw new Error("There is Something wrong in refresh token")
+        }
+        const accessToken = generateToken(user?.id);
+        res.json(accessToken)
+    })
+
+})
+
+const logout = asyncHandler(async (req, res) => {
+    const cookie = req.cookies;
+    if (!cookie?.refreshToken) throw new Error("No refresh Token in cookies");
+    const refreshToken = cookie.refreshToken;
+    const user = await User.findOne({ refreshToken })
+    if (!user) {
+        res.clearCookie("refreshToken", {
+            httpOnly: true,
+            secure: true
+        });
+        return res.sendStatus(204); //forbidden
+    }
+    await User.findOneAndUpdate(refreshToken, {
+        refreshToken: "",
+    })
+    res.clearCookie("refreshToken", {
+        httpOnly: true,
+        secure: true,
+    })
+    return res.sendStatus(204)
 })
 
 //block user 
@@ -167,4 +201,4 @@ const unblockUser = asyncHandler(async (req, res) => {
         throw new Error(error)
     }
 })
-module.exports = { createUser, loginCtrl, getAllUsers, getAUser, deleteUser, updatedUser, blockUser, unblockUser, handleRefreshToken, }
+module.exports = { createUser, loginCtrl, getAllUsers, getAUser, deleteUser, updatedUser, blockUser, unblockUser, handleRefreshToken, logout }
